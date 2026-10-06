@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SQL Test Execution Results - Streamhub Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    background: #0b0f19;
+    color: #f3f4f6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 2.5rem;
+    margin: 0;
+  }
+  h1 {
+    color: #60a5fa;
+    font-size: 1.8rem;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: #9ca3af;
+    margin-bottom: 2rem;
+  }
+  .section {
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  }
+  h2 {
+    color: #ffffff;
+    font-size: 1.3rem;
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.75rem;
+  }
+  p.desc {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    margin-top: 1rem;
+  }
+  th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  th {
+    background: rgba(37, 99, 235, 0.2);
+    color: #93c5fd;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+  }
+</style>
+</head>
+<body>
+  <h1>SQL Test Scenarios — Automated Verification</h1>
+  <div class="subtitle">Streamhub Assessment A4 &bull; Verified in SQLite / ANSI SQL Engine</div>
+
+  <div class="section" id="section-scenario1">
+    <h2>Scenario 1: Round-Trip Money Transfers (Within 24h &amp; 10% Amount Tolerance)</h2>
+    <p class="desc">
+      Identifies Account A &rarr; Account B &rarr; Account A transfers where the returned amount is within 10% and completed within a 24-hour window.
+    </p>
+    <span class="badge">3 Qualified Round-Trip Instances Detected</span>
+    <table><thead><tr><th>leg1_txn_id</th><th>account_a</th><th>account_b</th><th>leg1_amount</th><th>leg1_timestamp</th><th>leg2_txn_id</th><th>leg2_amount</th><th>leg2_timestamp</th><th>amount_diff</th><th>pct_diff</th><th>hours_between</th></tr></thead><tbody><tr><td>TXN_001</td><td>ACC_101</td><td>ACC_202</td><td>1000</td><td>2024-05-10 09:00:00</td><td>TXN_002</td><td>950</td><td>2024-05-10 13:00:00</td><td>50.0</td><td>5.0</td><td>4.0</td></tr><tr><td>TXN_003</td><td>ACC_303</td><td>ACC_404</td><td>500</td><td>2024-05-11 08:30:00</td><td>TXN_004</td><td>500</td><td>2024-05-12 02:30:00</td><td>0.0</td><td>0.0</td><td>18.0</td></tr><tr><td>TXN_010</td><td>ACC_222</td><td>ACC_333</td><td>1500</td><td>2024-05-15 10:00:00</td><td>TXN_011</td><td>1600</td><td>2024-05-15 16:30:00</td><td>100.0</td><td>6.67</td><td>6.5</td></tr></tbody></table>
+  </div>
+
+  <div class="section" id="section-scenario2">
+    <h2>Scenario 2: IPL 2024 Player Performance Streaks (30+ Runs in 3+ Consecutive Matches)</h2>
+    <p class="desc">
+      Identifies players scoring 30+ runs in &ge; 3 consecutive matches, returning player name and exact streak commencement date using Island-and-Gaps window analysis.
+    </p>
+    <span class="badge">4 Qualifying Streaks Detected</span>
+    <table><thead><tr><th>player_name</th><th>streak_commenced_date</th><th>consecutive_matches</th><th>streak_concluded_date</th><th>scores_in_streak</th></tr></thead><tbody><tr><td>Virat Kohli</td><td>2024-04-06</td><td>4</td><td>2024-04-21</td><td>113, 42, 42, 51</td></tr><tr><td>KL Rahul</td><td>2024-04-07</td><td>3</td><td>2024-04-19</td><td>33, 39, 82</td></tr><tr><td>Rohit Sharma</td><td>2024-04-07</td><td>3</td><td>2024-04-14</td><td>49, 38, 105</td></tr><tr><td>Ruturaj Gaikwad</td><td>2024-04-08</td><td>5</td><td>2024-04-28</td><td>67, 69, 43, 108, 98</td></tr></tbody></table>
+  </div>
+</body>
+</html>

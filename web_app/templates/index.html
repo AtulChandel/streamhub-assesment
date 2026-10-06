@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamEMI &mdash; Financial Loan Analytics & Amortization Dashboard</title>
+  <meta name="description" content="Interactive EMI Calculator & Amortization Schedule Analytics Dashboard powered by Streamhub">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Application Container -->
+  <div id="app" class="app-layout">
+    
+    <!-- Top Navigation -->
+    <header class="app-navbar" id="app-navbar">
+      <div class="brand-container">
+        <div class="brand-logo" id="brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <div class="brand-details">
+          <h1 class="brand-title" id="app-heading">Stream<span class="accent-text">EMI</span></h1>
+          <span class="brand-tagline">Financial Analytics & Amortization Suite</span>
+        </div>
+      </div>
+      <div class="navbar-actions">
+        <div class="currency-selector-wrapper">
+          <label for="currency-select" class="currency-label">Currency:</label>
+          <select id="currency-select" class="currency-select" data-testid="currency-select">
+            <option value="$" selected>USD ($)</option>
+            <option value="₹">INR (₹)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+          </select>
+        </div>
+        <div class="status-badge" id="backend-status-badge" data-testid="backend-status-badge">
+          <span class="pulse-indicator"></span>
+          <span class="status-text">Backend Connected</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content">
+      
+      <!-- Top Section: Calculator Inputs + Visual Breakdown -->
+      <section class="calculator-grid" id="calculator-section" aria-label="EMI Calculator and Summary">
+        
+        <!-- Left: Interactive Inputs Card -->
+        <div class="card glass-card input-card" id="input-controls-card" data-testid="input-controls-card">
+          <div class="card-header">
+            <h2 class="card-title">Loan Parameters</h2>
+            <span class="card-subtitle">Adjust sliders or enter exact values</span>
+          </div>
+
+          <form id="emi-form" class="calculator-form" onsubmit="return false;">
+            <!-- Principal Loan Amount -->
+            <div class="form-group" id="group-principal">
+              <div class="form-label-row">
+                <label for="principal-input" class="form-label">Loan Amount (<span class="curr-symbol">$</span>)</label>
+                <div class="input-with-symbol">
+                  <span class="symbol-prefix curr-symbol">$</span>
+                  <input type="number" id="principal-input" class="numeric-input" data-testid="principal-input" value="1000000" min="10000" max="100000000" step="10000">
+                </div>
+              </div>
+              <input type="range" id="principal-slider" class="range-slider" data-testid="principal-slider" value="1000000" min="50000" max="10000000" step="10000">
+              <div class="slider-marks">
+                <span>$50K</span>
+                <span>$5M</span>
+                <span>$10M</span>
+              </div>
+            </div>
+
+            <!-- Interest Rate -->
+            <div class="form-group" id="group-rate">
+              <div class="form-label-row">
+                <label for="rate-input" class="form-label">Interest Rate (% p.a.)</label>
+                <div class="input-with-symbol">
+                  <input type="number" id="rate-input" class="numeric-input" data-testid="rate-input" value="8.5" min="0.1" max="30.0" step="0.1">
+                  <span class="symbol-suffix">%</span>
+                </div>
+              </div>
+              <input type="range" id="rate-slider" class="range-slider" data-testid="rate-slider" value="8.5" min="1.0" max="25.0" step="0.1">
+              <div class="slider-marks">
+                <span>1%</span>
+                <span>13%</span>
+                <span>25%</span>
+              </div>
+            </div>
+
+            <!-- Loan Tenure -->
+            <div class="form-group" id="group-tenure">
+              <div class="form-label-row">
+                <label for="tenure-input" class="form-label">Loan Tenure</label>
+                <div class="tenure-control-group">
+                  <input type="number" id="tenure-input" class="numeric-input" data-testid="tenure-input" value="20" min="1" max="40" step="1">
+                  <div class="unit-toggle" id="tenure-unit-toggle">
+                    <button type="button" class="unit-btn active" id="unit-years" data-testid="unit-years" data-unit="years">Yr</button>
+                    <button type="button" class="unit-btn" id="unit-months" data-testid="unit-months" data-unit="months">Mo</button>
+                  </div>
+                </div>
+              </div>
+              <input type="range" id="tenure-slider" class="range-slider" data-testid="tenure-slider" value="20" min="1" max="35" step="1">
+              <div class="slider-marks">
+                <span id="tenure-min-label">1 Yr</span>
+                <span id="tenure-mid-label">18 Yr</span>
+                <span id="tenure-max-label">35 Yr</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="calculate-btn" data-testid="calculate-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                </svg>
+                Calculate EMI
+              </button>
+              <button type="button" class="btn btn-secondary" id="reset-btn" data-testid="reset-btn">Reset Defaults</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Right: Summary Dashboard + Visual Element (Donut Breakdown) -->
+        <div class="card glass-card dashboard-card" id="summary-dashboard-card" data-testid="summary-dashboard-card">
+          <div class="card-header">
+            <h2 class="card-title">Loan Summary & Insights</h2>
+            <span class="card-subtitle" id="summary-tenure-badge">Based on 20 Years Tenure</span>
+          </div>
+
+          <!-- Highlight Metric: Monthly EMI -->
+          <div class="highlight-metric-banner" id="highlight-metric-banner" data-testid="highlight-metric-banner">
+            <div class="highlight-label">Equated Monthly Installment (EMI)</div>
+            <div class="highlight-value" id="monthly-emi-value" data-testid="monthly-emi-value">$8,678.23</div>
+            <div class="highlight-sub">payable every month</div>
+          </div>
+
+          <!-- Metric Cards Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card" id="card-principal" data-testid="card-principal">
+              <span class="metric-label">Principal Amount</span>
+              <span class="metric-value" id="summary-principal-value" data-testid="summary-principal-value">$1,000,000.00</span>
+              <div class="metric-indicator principal-indicator"></div>
+            </div>
+
+            <div class="metric-card" id="card-interest" data-testid="card-interest">
+              <span class="metric-label">Total Interest</span>
+              <span class="metric-value text-accent" id="total-interest-value" data-testid="total-interest-value">$1,082,775.20</span>
+              <div class="metric-indicator interest-indicator"></div>
+            </div>
+
+            <div class="metric-card" id="card-total" data-testid="card-total">
+              <span class="metric-label">Total Payment</span>
+              <span class="metric-value text-glow" id="total-payment-value" data-testid="total-payment-value">$2,082,775.20</span>
+              <div class="metric-indicator total-indicator"></div>
+            </div>
+          </div>
+
+          <!-- Visual Chart Element: Interactive Donut Chart -->
+          <div class="chart-section" id="chart-section">
+            <div class="chart-header">
+              <h3 class="chart-title">Breakdown of Total Payment</h3>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="legend-dot principal-dot"></span> Principal (<span id="legend-principal-pct">48.0%</span>)</span>
+                <span class="legend-item"><span class="legend-dot interest-dot"></span> Interest (<span id="legend-interest-pct">52.0%</span>)</span>
+              </div>
+            </div>
+
+            <div class="chart-canvas-wrapper" id="chart-container" data-testid="chart-container">
+              <!-- Custom Interactive SVG Donut Chart with high precision -->
+              <svg id="emi-donut-chart" class="donut-chart-svg" data-testid="emi-donut-chart" viewBox="0 0 200 200" width="180" height="180">
+                <circle class="donut-bg" cx="100" cy="100" r="70" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="26"></circle>
+                <circle id="donut-slice-principal" class="donut-slice principal-slice" cx="100" cy="100" r="70" fill="transparent" stroke="#3b82f6" stroke-width="26" stroke-dasharray="211 440" stroke-dashoffset="0" data-testid="donut-slice-principal"></circle>
+                <circle id="donut-slice-interest" class="donut-slice interest-slice" cx="100" cy="100" r="70" fill="transparent" stroke="#f43f5e" stroke-width="26" stroke-dasharray="229 440" stroke-dashoffset="-211" data-testid="donut-slice-interest"></circle>
+                <text x="100" y="96" text-anchor="middle" class="donut-center-title">TOTAL</text>
+                <text x="100" y="114" text-anchor="middle" id="donut-center-amount" class="donut-center-amount">$2.08M</text>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- Bottom Section: Detailed Report & Amortization Schedule -->
+      <section class="report-section" id="report-section" aria-label="Amortization Schedule Report">
+        <div class="card glass-card schedule-card" id="schedule-card" data-testid="schedule-card">
+          
+          <div class="report-controls-bar">
+            <div>
+              <h2 class="card-title">Amortization Schedule & Payment Report</h2>
+              <span class="card-subtitle">Detailed period-by-period principal vs. interest breakdown</span>
+            </div>
+
+            <div class="report-actions">
+              <!-- View Toggle (Yearly vs Monthly) -->
+              <div class="view-mode-toggle" id="view-mode-toggle">
+                <button type="button" class="mode-btn active" id="view-yearly-btn" data-testid="view-yearly-btn" data-mode="yearly">Yearly View</button>
+                <button type="button" class="mode-btn" id="view-monthly-btn" data-testid="view-monthly-btn" data-mode="monthly">Monthly View</button>
+              </div>
+
+              <!-- Interactive Filter / Search -->
+              <div class="filter-wrapper">
+                <input type="text" id="schedule-filter-input" data-testid="schedule-filter-input" placeholder="Filter by Year (e.g. 1, 5)..." class="filter-input">
+              </div>
+
+              <!-- Export CSV Button -->
+              <button type="button" class="btn btn-export" id="export-csv-btn" data-testid="export-csv-btn" title="Download Amortization Table as CSV">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress / Balance Visual element -->
+          <div class="timeline-visual-bar" id="timeline-visual-bar" data-testid="timeline-visual-bar">
+            <div class="visual-bar-label">
+              <span>Loan Payoff Progress Timeline</span>
+              <span id="visual-bar-status">0% to 100% Repaid</span>
+            </div>
+            <div class="visual-progress-track">
+              <div class="visual-progress-fill" id="visual-progress-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Schedule Data Table -->
+          <div class="table-responsive" id="table-container">
+            <table class="schedule-table" id="amortization-table" data-testid="amortization-table">
+              <thead>
+                <tr>
+                  <th id="th-period">Year</th>
+                  <th id="th-opening">Opening Balance</th>
+                  <th id="th-emi">EMI Paid</th>
+                  <th id="th-principal">Principal Paid</th>
+                  <th id="th-interest">Interest Paid</th>
+                  <th id="th-closing">Closing Balance</th>
+                  <th id="th-repaid">% Loan Repaid</th>
+                </tr>
+              </thead>
+              <tbody id="schedule-tbody" data-testid="schedule-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer" id="app-footer">
+      <div class="footer-content">
+        <span>© 2026 Streamhub LTD. StreamEMI Financial Analytics Platform.</span>
+        <span class="footer-links">Built with Python &amp; Automated with Playwright</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/static/js/calculator.js"></script>
+</body>
+</html>
